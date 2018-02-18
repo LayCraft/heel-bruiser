@@ -1,0 +1,7 @@
+{
+  "name": "Spanner Snake",
+  "description": "A BattleSnake 2018 AI written in Python.",
+  "repository": "https://github.com/LayCraft",
+  "website": "http://battlesnake.io",
+  "keywords": ["battlesnake","laycraft","2018"]
+}
