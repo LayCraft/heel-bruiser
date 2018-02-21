@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import bottle
 import os
 import sys
