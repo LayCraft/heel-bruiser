@@ -3,7 +3,7 @@
 import bottle
 import os
 import sys
-import move
+from move import getmove
 import board
 
 # Run virtual environment first
@@ -62,7 +62,7 @@ def move():
     data = bottle.request.json
     
     # eventually needs to return
-    move = getMove(data)
+    move = getmove(data)
     #taunt = getTaunt()
     return {
         'move': move,

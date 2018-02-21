@@ -1,5 +1,5 @@
 from board import Board
 
-def getMove(blob):
+def getmove(blob):
     print('getting move')
-    return { 'move':'left' }
+    return 'right'
