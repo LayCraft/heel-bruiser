@@ -3,6 +3,8 @@
 import bottle
 import os
 import sys
+import move
+import board
 
 # Run virtual environment first
 #   source env/bin/activate
@@ -59,10 +61,11 @@ def move():
     print("MOVE request")
     data = bottle.request.json
     
-    print(data)
-
+    # eventually needs to return
+    move = getMove(data)
+    #taunt = getTaunt()
     return {
-        'move': 'right',
+        'move': move,
         'taunt': 'sss'
     }
 

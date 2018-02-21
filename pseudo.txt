@@ -1,0 +1,35 @@
+set depth of traversal
+
+collect board information
+
+generate board object from class
+    
+    traversal distance = 0 the head has a traversal distance of zero
+    open = {} 
+    closed = {}
+
+    add head coordinate to open coordinates collection with distance of zero and set distance from head to zero
+    while open coordinates are not empty
+        collect othoganal nodes
+        assign current node to their "from" node
+        determine if threat location. 
+            if it is a threat add one board width of movement cost (threats are bad spots. They can go here but only in a last-resort situation)
+        record the previous node's location in the current node
+        assign node's traversal distance to previous node plus one
+        calculate straight line distance from head and record that
+        if nodes beside this one are not in closed collection add them to open collection after setting distance
+
+    determine which node yeilds the greatest distance for least cost
+
+    while open coordinates are not empty
+        travel distance increment
+        check if surrounding points are in the closed collection
+        all points that are not in the closed collection get assigned 
+        collect all surrounding points
+            for contents
+            if space is blocked add it to the checked 
+            if space is open
+
+
+    determine which direction has more area by flood filling in all directions
+    the direction with more flood fill area predict next move
