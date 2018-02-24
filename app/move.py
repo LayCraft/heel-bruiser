@@ -1,6 +1,15 @@
 from board import Board
 
-def getmove(blob):
+def snakePlotter (board, snake, myLength):
+    return board
+
+def foodPlotter (board, food):
+    return board
+    
+def orthoLocations(height, width, point):
+    return [(0,0,)]
+
+def getMove(blob):
     # print(blob)
     board = {}
 
@@ -12,30 +21,33 @@ def getmove(blob):
 
     '''
     each board space has properties:
-    cost: how much does it cost to get here? moving to an open space should be a normal amount
+    cost: how much does it cost to get here? 
     benefit: how much good comes from going here? hunger, open space?, how many other open space options are connected to it?
     from: where the snake traverses from to get here
     contains: head food threat body tailButNearFood tail myTail myHead shorterOrtho longerOrtho
-    moves: how many moves from the head?
+    moves: how many moves from the head to here?
+    distance: how far is this from the head?
 
     cost starts at 10 for an open space
-        if it is a threat space, the cost goes  higher than moving to an open space
+        if it is a threat space, the cost is higher than moving to an open space
         given the option of moving to a trapped spot for less cost the benefit of open space should offset the higher cost
+        - there is no cost if all surrounding nodes are empty. for each board direction that has a body add 1 cost and threats add 2
     benefit starts at 10 for an open space
         if an open space has food it adds a benefit to an open space. how much? 
 
-        # closed space has no benefit
-        # cost is based on how far you travel to get here
-        # cost increases greatly for risky locations
+
+    if there is zero benefit then do not go there
+    if there is zero cost then the 
     '''
-    print(board[(0,0,)])
     myLength = blob['you']['length']
     myHead = (blob['you']['body']['data'][0]['x'],blob['you']['body']['data'][0]['y'])
 
+    print(board[(0,0,)])
     print(height)
     print(width)
     print(myLength)
     print(myHead)
+
     return 'right'
 
     '''
