@@ -41,12 +41,7 @@ def start():
 
     return {
         'color': '#FF00FF',
-        
-        
-        'name': "spanne̥̩̯̱̝̜̙̽̾̑ͯ̂̂̌r̙͇̩ͥ̓ͣ ̑̂ͦͣ̓̈́s̮̞̪̰̄͑͗ͭn̙̙̙̩̹a̘͍̍̇k̲̰̃͂e̜͚̿̂",
-
-        
-        
+        'name': "Spanner",
         # URL of the image to display as your avatar.
         'head_url': head_url,
         'taunt': "Ssstarting now",
@@ -54,7 +49,6 @@ def start():
         'tail_type': 'round-bum',
         'secondary_color': '#00F906',
     }
-
 
 @bottle.post('/move')
 def move():

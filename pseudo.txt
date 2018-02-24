@@ -1,6 +1,15 @@
 set depth of traversal
 
 collect board information
+    board object is a dictionary
+        key should be a tuple xcoord+q+ycoordinate
+        value should be object with properties
+            food t/f
+            head t/f
+            longersnake t/f
+            threat +1 each possible threat
+            tailspot t/f
+            
 
 generate board object from class
     
@@ -14,6 +23,10 @@ generate board object from class
         assign current node to their "from" node
         determine if threat location. 
             if it is a threat add one board width of movement cost (threats are bad spots. They can go here but only in a last-resort situation)
+        determine if it is a food location.
+            reduce movement cost by one (get it if you are close)
+        determine if a tail location
+            if former tail location check if head is near food
         record the previous node's location in the current node
         assign node's traversal distance to previous node plus one
         calculate straight line distance from head and record that
