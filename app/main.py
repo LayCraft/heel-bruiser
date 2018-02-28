@@ -54,7 +54,7 @@ def start():
 def move():
     print("MOVE request")
     data = bottle.request.json
-    
+    # print(data)
     # eventually needs to return
     move = getMove(data)
     #taunt = getTaunt()
