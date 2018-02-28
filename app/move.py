@@ -227,12 +227,26 @@ def getMove(blob):
         else:
             board = snakePlotter(board, snake, myLength)
 
-    print("Open spaces incoming")
-    print(spaceCounter(board, myHead, width, height))
+    directions = {}
+    # measure the connected squares for each direction and put them in order
+    directions['up'] = spaceCounter(board, (myHead[0],myHead[1]-1), width, height)
+    directions['down'] = spaceCounter(board, (myHead[0],myHead[1]+1), width, height)
+    directions['left'] = spaceCounter(board, (myHead[0]-1,myHead[1]), width, height)
+    directions['right'] = spaceCounter(board, (myHead[0]+1,myHead[1]), width, height)
+
+    if point[1]-1 >= 0:
+        points.append((point[0],point[1]-1))
+    if point[1]+1 < width:
+        points.append((point[0],point[1]+1))
+    if point[0]-1 >= 0: 
+        points.append((point[0]-1,point[1]))
+    if point[0]+1 < height: 
+        points.append((point[0]+1,point[1]))
+    print(directions)
+
     # board = pointSetter(board, [(0,0),(0,1),(0,2)], 'cost', 10)
     # boardPrinter(board, width, height, 'full')
     # print(board)
-
     # print(board[(0,0,)])
     # print(height)
     # print(width)
