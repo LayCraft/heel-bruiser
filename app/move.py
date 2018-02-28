@@ -158,29 +158,59 @@ def pointSetter(board, coords, key, modification):
         board[coordinate][key]= board[coordinate][key] + modification
     return board
 
-def spaceCounter(board, coord, width, height):
-    # find a count of all connected open spaces
-    unchecked = set()
-    checked = set()
-    #add start coordinate 
-    unchecked.add(coord)
-    connected = 0
-    while len(unchecked)>0:
-        #get contents of space
-        point = unchecked.pop()
-        checked.add(point)
-        contents = board[point]
-        if contents['full']:
-            #coordinate is intraversable! add to checked
+
+def spaceCounter(board, myHead, width, height):
+    def checkDirection(coord):
+        # find a count of all connected open spaces
+        unchecked = set()
+        checked = set()
+        #add start coordinate 
+        unchecked.add(coord)
+        connected = 0
+        while len(unchecked)>0:
+            #get contents of space
+            point = unchecked.pop()
             checked.add(point)
-        elif not contents['full']:
-            #is an empty space
-            connected = connected + 1
-            # add ortho points into unchecked set if not examined
-            for prospective in ortho(point, width, height):
-                if prospective not in unchecked and prospective not in checked:
-                    unchecked.add(prospective)
-    return connected
+            contents = board[point]
+            if contents['full']:
+                #coordinate is intraversable! add to checked
+                checked.add(point)
+            elif not contents['full']:
+                #is an empty space
+                connected = connected + 1
+                prospectives = set()
+                if point[1]-1 >= 0:
+                    prospectives.add((point[0],point[1]-1))
+                if point[1]+1 < height:
+                    prospectives.add((point[0],point[1]+1))
+                if point[0]-1 >= 0: 
+                    prospectives.add((point[0]-1,point[1]))
+                if point[0]+1 < width: 
+                    prospectives.add((point[0]+1,point[1]))
+                # add ortho points into unchecked set if not examined
+                for prospective in prospectives:
+                    if prospective not in unchecked and prospective not in checked:
+                        unchecked.add(prospective)
+        return connected
+    
+    directions = {}
+    if myHead[1]-1 >= 0:
+        distance = checkDirection((myHead[0], myHead[1]-1))
+        if distance > 0:
+            directions['up'] = distance
+    if myHead[1]+1 < height:
+        distance = checkDirection((myHead[0],myHead[1]+1))
+        if distance > 0:
+            directions['down'] = distance
+    if myHead[0]-1 >= 0: 
+        distance = checkDirection((myHead[0]-1,myHead[1]))
+        if distance > 0:
+            directions['left'] = distance
+    if myHead[0]+1 < width: 
+        distance = checkDirection((myHead[0]+1,myHead[1]))
+        if distance > 0:
+            directions['right'] = distance
+    return directions
 
 def getMove(blob):
     # print(blob)
@@ -230,16 +260,9 @@ def getMove(blob):
         else:
             board = snakePlotter(board, snake, myLength)
 
-    directions = {}
-    # measure the connected squares for each direction and put them in order
-    if myHead[1]-1 >= 0:
-        directions['up'] = spaceCounter(board, (myHead[0],myHead[1]-1), width, height)
-    if myHead[1]+1 < height:
-        directions['down'] = spaceCounter(board, (myHead[0],myHead[1]+1), width, height)
-    if myHead[0]-1 >= 0: 
-        directions['left'] = spaceCounter(board, (myHead[0]-1,myHead[1]), width, height)
-    if myHead[0]+1 < width: 
-        directions['right'] = spaceCounter(board, (myHead[0]+1,myHead[1]), width, height)
+    # return a dictionary of directions and how far each direction goes
+    directions = spaceCounter(board, myHead, width, height)
+
     print(directions)
 
     # remove anything less than the highest value
