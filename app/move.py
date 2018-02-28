@@ -1,4 +1,5 @@
 from board import Board
+
 def boardPrinter(board, width, height, key):
     # the key marks which element you want to write on the board
     for y in range(1, height):
@@ -140,11 +141,11 @@ def ortho(point, width, height):
     points = []
     if point[1]-1 >= 0:
         points.append((point[0],point[1]-1))
-    if point[1]+1 < width:
+    if point[1]+1 < height:
         points.append((point[0],point[1]+1))
     if point[0]-1 >= 0: 
         points.append((point[0]-1,point[1]))
-    if point[0]+1 < height: 
+    if point[0]+1 < width: 
         points.append((point[0]+1,point[1]))
     return points
 
@@ -188,7 +189,9 @@ def getMove(blob):
     width = blob['width']
     myLength = blob['you']['length']
     myHead = (blob['you']['body']['data'][0]['x'],blob['you']['body']['data'][0]['y'])
-    
+    if myHead[0] < 0 or myHead[0] >= width or myHead[1] < 0 or myHead[1] >=height:
+        return 'right'
+
     # instantiate board
     for x in range(0,width):
         for y in range(0,height):
@@ -229,21 +232,27 @@ def getMove(blob):
 
     directions = {}
     # measure the connected squares for each direction and put them in order
-    directions['up'] = spaceCounter(board, (myHead[0],myHead[1]-1), width, height)
-    directions['down'] = spaceCounter(board, (myHead[0],myHead[1]+1), width, height)
-    directions['left'] = spaceCounter(board, (myHead[0]-1,myHead[1]), width, height)
-    directions['right'] = spaceCounter(board, (myHead[0]+1,myHead[1]), width, height)
-
-    if point[1]-1 >= 0:
-        points.append((point[0],point[1]-1))
-    if point[1]+1 < width:
-        points.append((point[0],point[1]+1))
-    if point[0]-1 >= 0: 
-        points.append((point[0]-1,point[1]))
-    if point[0]+1 < height: 
-        points.append((point[0]+1,point[1]))
+    if myHead[1]-1 >= 0:
+        directions['up'] = spaceCounter(board, (myHead[0],myHead[1]-1), width, height)
+    if myHead[1]+1 < height:
+        directions['down'] = spaceCounter(board, (myHead[0],myHead[1]+1), width, height)
+    if myHead[0]-1 >= 0: 
+        directions['left'] = spaceCounter(board, (myHead[0]-1,myHead[1]), width, height)
+    if myHead[0]+1 < width: 
+        directions['right'] = spaceCounter(board, (myHead[0]+1,myHead[1]), width, height)
     print(directions)
 
+    # remove anything less than the highest value
+    highest = 0
+    longest = set()
+    for x in directions:
+        if directions[x] >= highest:
+            highest = directions[x]
+    for x in directions:
+        if directions[x] >= highest:
+            longest.add(x)
+
+    print(longest)
     # board = pointSetter(board, [(0,0),(0,1),(0,2)], 'cost', 10)
     # boardPrinter(board, width, height, 'full')
     # print(board)
@@ -253,7 +262,7 @@ def getMove(blob):
     # print(myLength)
     # print(myHead)
 
-    return 'right'
+    return longest.pop()
 
     '''
     two snakes on board
