@@ -182,7 +182,7 @@ def spaceCounter(board, myHead, width, height):
                 connected = connected + 1
                 if contents['food']:
                     #get distance to the food
-                    foodDistance = foodDistance + (abs(point[0]-startingPoint[0])**2 + abs(point[1]-startingPoint[1])**2)**2
+                    foodDistance = foodDistance + int(((abs(point[0]-startingPoint[0])**2 + abs(point[1]-startingPoint[1])**2)**2)/10)
                     foodCount = foodCount + 1
                 prospectives = set()
                 if point[1]-1 >= 0:
@@ -204,6 +204,8 @@ def spaceCounter(board, myHead, width, height):
         return {'foodFactor':foodFactor, 'connected':connected}
     
     directions = {}
+
+    # fix up food factor math. if there is 2 spaces and 1 food the desire to eat should be insignificant
     if myHead[1]-1 >= 0:
         distance = checkDirection((myHead[0], myHead[1]-1))
         if distance['connected'] > 0:
@@ -254,27 +256,12 @@ def getMove(blob):
     #calculate food incentives how much closer to food does it get you? Determine food factor for spot.
     #each food pellet in that direction is worth (board width + board height -2) - food distance
     # this should return a food distance potential
+    print("directions")
     print(directions)
 
     # remove anything less than the highest value
-    highest = 0
-    longest = set()
-    for x in directions:
-        if directions[x] >= highest:
-            highest = directions[x]
-    for x in directions:
-        if directions[x] >= highest:
-            longest.add(x)
+    # isolate the direction with the least resistence
 
-    # print(longest)
-    # board = pointSetter(board, [(0,0),(0,1),(0,2)], 'cost', 10)
-    # boardPrinter(board, width, height, 'full')
-    # print(board)
-    # print(board[(0,0,)])
-    # print(height)
-    # print(width)
-    # print(myLength)
-    # print(myHead)
 
     return longest.pop()
 
