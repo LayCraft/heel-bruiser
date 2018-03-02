@@ -182,7 +182,7 @@ def spaceCounter(board, myHead, width, height):
                 connected = connected + 1
                 if contents['food']:
                     #get distance to the food
-                    foodDistance = foodDistance + abs(point[0]-startingPoint[0]) + abs(point[1]-startingPoint[1])
+                    foodDistance = foodDistance + (abs(point[0]-startingPoint[0])**2 + abs(point[1]-startingPoint[1])**2)**2
                     foodCount = foodCount + 1
                 prospectives = set()
                 if point[1]-1 >= 0:
@@ -198,29 +198,28 @@ def spaceCounter(board, myHead, width, height):
                     if prospective not in unchecked and prospective not in checked:
                         unchecked.add(prospective)
         if foodCount > 0:
-            foodFactor = foodDistance / foodCount
+            foodFactor = int(foodDistance / foodCount)
         else:
             foodFactor = 0
-        print(foodFactor)
         return {'foodFactor':foodFactor, 'connected':connected}
     
     directions = {}
     if myHead[1]-1 >= 0:
         distance = checkDirection((myHead[0], myHead[1]-1))
         if distance['connected'] > 0:
-            directions['up'] = distance
+            directions['up'] = distance['connected'] + distance['foodFactor']
     if myHead[1]+1 < height:
         distance = checkDirection((myHead[0],myHead[1]+1))
         if distance['connected'] > 0:
-            directions['down'] = distance
+            directions['down'] = distance['connected'] + distance['foodFactor']
     if myHead[0]-1 >= 0: 
         distance = checkDirection((myHead[0]-1,myHead[1]))
         if distance['connected'] > 0:
-            directions['left'] = distance
+            directions['left'] = distance['connected'] + distance['foodFactor']
     if myHead[0]+1 < width: 
         distance = checkDirection((myHead[0]+1,myHead[1]))
         if distance['connected'] > 0:
-            directions['right'] = distance
+            directions['right'] = distance['connected'] + distance['foodFactor']
     return directions
 
 def getMove(blob):
@@ -261,13 +260,13 @@ def getMove(blob):
     highest = 0
     longest = set()
     for x in directions:
-        if directions[x]['connected'] >= highest:
-            highest = directions[x]['connected']
+        if directions[x] >= highest:
+            highest = directions[x]
     for x in directions:
-        if directions[x]['connected'] >= highest:
+        if directions[x] >= highest:
             longest.add(x)
 
-    print(longest)
+    # print(longest)
     # board = pointSetter(board, [(0,0),(0,1),(0,2)], 'cost', 10)
     # boardPrinter(board, width, height, 'full')
     # print(board)
