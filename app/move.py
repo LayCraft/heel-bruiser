@@ -158,15 +158,17 @@ def pointSetter(board, coords, key, modification):
         board[coordinate][key]= board[coordinate][key] + modification
     return board
 
-
 def spaceCounter(board, myHead, width, height):
     def checkDirection(coord):
+        startingPoint = coord
         # find a count of all connected open spaces
         unchecked = set()
         checked = set()
         #add start coordinate 
         unchecked.add(coord)
         connected = 0
+        foodCount = 0
+        foodDistance = 0
         while len(unchecked)>0:
             #get contents of space
             point = unchecked.pop()
@@ -178,6 +180,10 @@ def spaceCounter(board, myHead, width, height):
             elif not contents['full']:
                 #is an empty space
                 connected = connected + 1
+                if contents['food']:
+                    #get distance to the food
+                    foodDistance = foodDistance + abs(point[0]-startingPoint[0]) + abs(point[1]-startingPoint[1])
+                    foodCount = foodCount + 1
                 prospectives = set()
                 if point[1]-1 >= 0:
                     prospectives.add((point[0],point[1]-1))
@@ -191,24 +197,29 @@ def spaceCounter(board, myHead, width, height):
                 for prospective in prospectives:
                     if prospective not in unchecked and prospective not in checked:
                         unchecked.add(prospective)
-        return connected
+        if foodCount > 0:
+            foodFactor = foodDistance / foodCount
+        else:
+            foodFactor = 0
+        print(foodFactor)
+        return {'foodFactor':foodFactor, 'connected':connected}
     
     directions = {}
     if myHead[1]-1 >= 0:
         distance = checkDirection((myHead[0], myHead[1]-1))
-        if distance > 0:
+        if distance['connected'] > 0:
             directions['up'] = distance
     if myHead[1]+1 < height:
         distance = checkDirection((myHead[0],myHead[1]+1))
-        if distance > 0:
+        if distance['connected'] > 0:
             directions['down'] = distance
     if myHead[0]-1 >= 0: 
         distance = checkDirection((myHead[0]-1,myHead[1]))
-        if distance > 0:
+        if distance['connected'] > 0:
             directions['left'] = distance
     if myHead[0]+1 < width: 
         distance = checkDirection((myHead[0]+1,myHead[1]))
-        if distance > 0:
+        if distance['connected'] > 0:
             directions['right'] = distance
     return directions
 
@@ -227,29 +238,7 @@ def getMove(blob):
         for y in range(0,height):
             board[(x,y)] = {'cost':10, 'benefit':10, 'threat': False, 'food': False, 'full': False}
 
-
-    '''
-    each board space has properties:
-    cost: how much does it cost to get here? 
-    benefit: how much good comes from going here? hunger, open space?, how many other open space options are connected to it?
-    from: where the snake traverses from to get here
-    contains: head food threat body tailButNearFood tail myTail myHead shorterOrtho longerOrtho
-    moves: how many moves from the head to here?
-    distance: how far is this from the head?
-    origin: 
-
-    cost starts at 10 for an open space
-        if it is a threat space, the cost is higher than moving to an open space
-        given the option of moving to a trapped spot for less cost the benefit of open space should offset the higher cost
-        - there is no cost if all surrounding nodes are empty. for each board direction that has a body add 1 cost and threats add 2
-    benefit starts at 10 for an open space
-        if an open space has food it adds a benefit to an open space. how much? 
-
-
-    if there is zero benefit then do not go there
-    if there is zero cost then the 
-    '''
-
+    
     board = foodPlotter(board, blob['food'])
     isMe = True
     for snake in blob['snakes']['data']:
@@ -262,17 +251,20 @@ def getMove(blob):
 
     # return a dictionary of directions and how far each direction goes
     directions = spaceCounter(board, myHead, width, height)
-
+    
+    #calculate food incentives how much closer to food does it get you? Determine food factor for spot.
+    #each food pellet in that direction is worth (board width + board height -2) - food distance
+    # this should return a food distance potential
     print(directions)
 
     # remove anything less than the highest value
     highest = 0
     longest = set()
     for x in directions:
-        if directions[x] >= highest:
-            highest = directions[x]
+        if directions[x]['connected'] >= highest:
+            highest = directions[x]['connected']
     for x in directions:
-        if directions[x] >= highest:
+        if directions[x]['connected'] >= highest:
             longest.add(x)
 
     print(longest)
