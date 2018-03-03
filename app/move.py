@@ -43,6 +43,8 @@ def snakePlotter (board, snake, myLength):
     #this function plots other snakes
     # print('Parsing some other snake')
     # print(snake)
+    if snake['health'] == 0:
+        return board
 
     # is this snake's head a threat based on collision rules?
     isThreat = False
