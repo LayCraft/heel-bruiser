@@ -201,21 +201,26 @@ def spaceCounter(board, myHead, width, height):
         distance = checkDirection((myHead[0], myHead[1]-1))
         if distance['connected'] > 0:
             distance['direction'] = 'up'
+            distance['coord'] = (myHead[0], myHead[1]-1)
             directions.append(distance)
     if myHead[1]+1 < height:
         distance = checkDirection((myHead[0],myHead[1]+1))
         if distance['connected'] > 0:
             distance['direction'] = 'down'
+            distance['coord'] = (myHead[0], myHead[1]+1)
             directions.append(distance)
     if myHead[0]-1 >= 0: 
         distance = checkDirection((myHead[0]-1,myHead[1]))
         if distance['connected'] > 0:
             distance['direction'] = 'left'
+            distance['coord'] = (myHead[0]-1, myHead[1])
             directions.append(distance)
     if myHead[0]+1 < width: 
         distance = checkDirection((myHead[0]+1,myHead[1]))
         if distance['connected'] > 0:
             distance['direction'] = 'right'
+            distance['coord'] = (myHead[0]+1, myHead[1])
+
             directions.append(distance)
     return directions
 
@@ -275,47 +280,57 @@ def getMove(blob):
 
     
     print(directions)
-    print(directions[0]['isThreat'])
-
+    i = 0
+    allThreats = True
+    for direction in directions:
+        if not board[direction['coord']]['threat']:
+            allThreats = False
+            break
+        if board[direction['coord']]['threat']:
+            #keep cursor
+            i = i + 1
+    print("first non threat")
+    print(i)
     #order form high to low
     direction = reversed(directions)
+
+
+
+
     # no choices. Crash like a champ
-    if len(directions) == 0:
-        return 'right'
-    # case is there is only one option
-    elif len(directions) == 1:
-        return directions[0]['direction']
-    # case the amount of open spaces is in the first element
-    elif directions[0]['connected'] > directions[1]['connected']:
-        # case look for something that isn't a threat
-        notThreat = directions[0]['direction']
-        for element in directions:
-            if not element['isThreat'] and element['connected']>=myLength:
-                notThreat = element['direction']
-                break
-        # if a okay spot was found return it
-        return notThreat
-    # case the top two choices have the same number of connected spaces
-    elif directions[0]['connected'] == directions[1]['connected']:
-        # case look for something that isn't a threat first
-        notThreat = directions[0]['direction']
-        for element in directions:
-            if not element['isThreat'] and element['connected']>=myLength:
-                notThreat = element['direction']
-                break
+    # if len(directions) == 0:
+    #     return 'right'
+    # # case is there is only one option
+    # elif len(directions) == 1:
+    #     return directions[0]['direction']
+    # # case the amount of open spaces is in the first element
+    # elif directions[0]['connected'] > directions[1]['connected']:
+    #     # case look for something that isn't a threat
+    #     notThreat = directions[0]['direction']
+    #     for element in directions:
+    #         if not element['isThreat'] and element['connected']>=myLength:
+    #             notThreat = element['direction']
+    #             break
+    #     # if a okay spot was found return it
+    #     return notThreat
+    # # case the top two choices have the same number of connected spaces
+    # elif directions[0]['connected'] == directions[1]['connected']:
+    #     # case look for something that isn't a threat first
+    #     notThreat = directions[0]['direction']
+    #     for element in directions:
+    #         if not element['isThreat'] and element['connected']>=myLength:
+    #             notThreat = element['direction']
+    #             break
 
         # then go for the lowest 
-        if directions[0]['foodFactor']<=directions[1]['foodFactor']:
-            return directions[0]['direction']
+        # if directions[0]['foodFactor']<=directions[1]['foodFactor']:
+        #     return directions[0]['direction']
         # go     
-        elif directions[0]['foodFactor']>directions[1]['foodFactor']:
-            return directions[1]['direction']
-        else:
-            return directions[0]['direction']
+        # elif directions[0]['foodFactor']>directions[1]['foodFactor']:
+        #     return directions[1]['direction']
+        # else:
+        #     return directions[0]['direction']
     #compare all elements
-
-    
-
 
     return directions[0]['direction']
 
