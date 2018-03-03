@@ -193,7 +193,6 @@ def spaceCounter(board, myHead, width, height):
     directions = []
 
     # fix up food factor math. if there is 2 spaces and 1 food the desire to eat should be insignificant
-    #TODO
     if myHead[1]-1 >= 0:
         distance = checkDirection((myHead[0], myHead[1]-1))
         if distance['connected'] > 0:
@@ -215,13 +214,6 @@ def spaceCounter(board, myHead, width, height):
             distance['direction'] = 'right'
             directions.append(distance)
     return directions
-
-def evaluateMoveData(dir):
-    #connected high is good most important.
-    #threatcount low is good
-    #foodfactor low number is good steer this way
-    
-    return 'left'
 
 def getMove(blob):
     # print(blob)
@@ -258,9 +250,12 @@ def getMove(blob):
     print(directions)
     # for x in directions:
     #     # pop 
+    condensed = {}
+    for element in directions:
+        # reduce the area by the amount of threats
+        condensed[element['direction']] = element['connected'] - int(element['threatCount']/2)
+    print(condensed) # directions
 
-
-    # boardPrinter(board, width, height, 'threat')
   
 
 
