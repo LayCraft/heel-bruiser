@@ -214,7 +214,8 @@ def spaceCounter(board, myHead, width, height):
     return directions
 
 def getMove(blob):
-    # print(blob)
+    
+    print(blob['you']['name'])
     board = {}
     height = blob['height']
     width = blob['width']
@@ -265,6 +266,8 @@ def getMove(blob):
         passnum = passnum-1
     
     print(directions)
+    print("threat")
+    print(board[directions[0]['coord']]['threat'])
 
     #order form high to low
     direction = reversed(directions)
@@ -273,6 +276,7 @@ def getMove(blob):
     elif len(directions) == 1:
         return directions[0]['direction']
     elif directions[0]['connected'] - directions[0]['threatCount'] > directions[0]['connected'] - directions[0]['threatCount']:
+        # if board[directions[0]['coord']]['threat']==True:
         return directions[0]['direction']
     elif directions[0]['connected'] - directions[0]['threatCount'] == directions[0]['connected'] - directions[0]['threatCount']:
         if directions[0]['foodFactor']<directions[1]['foodFactor']:

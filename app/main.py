@@ -40,7 +40,8 @@ def start():
     )
 
     return {
-        'color': '#FF00FF',
+        # 'color': '#FF00FF',
+        'color': '#FEFEFE',
         'name': "Spanner",
         # URL of the image to display as your avatar.
         'head_url': head_url,
@@ -62,7 +63,9 @@ def move():
         'move': move,
         'taunt': 'sss'
     }
-
+@bottle.post('/end')
+def move():
+    print("dead")
 
 # Expose WSGI app (so gunicorn can find it)
 application = bottle.default_app()
