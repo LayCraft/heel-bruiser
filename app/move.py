@@ -2,6 +2,7 @@ from board import Board
 
 def boardPrinter(board, width, height, key):
     # the key marks which element you want to write on the board
+    #doesn't print right
     for y in range(1, height):
         line = '|'
         for x in range(1, width):
@@ -20,28 +21,20 @@ def mePlotter (board, snake):
         # put segments into board collection
         if isHead:
             # The head location does not have cost or benefit
-            board[(segment['x'],segment['y'])]['cost'] = 0
-            board[(segment['x'],segment['y'])]['benefit'] = 0
             board[(segment['x'],segment['y'])]['contains'] = 'myHead'
             board[(segment['x'],segment['y'])]['full'] = True
             isHead = False
         elif segment == snake['body']['data'][len(snake['body']['data'])-1]:
             if isTail:
                 # tail already found. This is a body near the start of the game
-                board[(segment['x'],segment['y'])]['cost'] = 99
-                board[(segment['x'],segment['y'])]['benefit'] = 0
                 board[(segment['x'],segment['y'])]['contains'] = 'body'
                 board[(segment['x'],segment['y'])]['full'] = True
             else:
                 # My tail. Can be like an empty space if no duplicate found
-                board[(segment['x'],segment['y'])]['cost'] = 10
-                board[(segment['x'],segment['y'])]['benefit'] = 10
                 board[(segment['x'],segment['y'])]['contains'] = 'myTail'
                 isTail = True
         else:
             #found a body segment
-            board[(segment['x'],segment['y'])]['cost'] = 99
-            board[(segment['x'],segment['y'])]['benefit'] = 0
             board[(segment['x'],segment['y'])]['contains'] = 'body'
             board[(segment['x'],segment['y'])]['full'] = True
     return board
@@ -67,11 +60,8 @@ def snakePlotter (board, snake, myLength):
         # put segments into board collection
         if isHead:
             # The head location does not have cost or benefit
-            board[(segment['x'],segment['y'])]['cost'] = 99
-            board[(segment['x'],segment['y'])]['benefit'] = 0
             board[(segment['x'],segment['y'])]['contains'] = 'head'
             board[(segment['x'],segment['y'])]['full'] = True
-
             isHead = False
             if isThreat:
                 # if key exists in board 
@@ -100,26 +90,18 @@ def snakePlotter (board, snake, myLength):
         elif segment == snake['body']['data'][len(snake['body']['data'])-1]:
             if isTail:
                 # tail already found. This is a body near the start of the game and is a full space
-                board[(segment['x'],segment['y'])]['cost'] = 99
-                board[(segment['x'],segment['y'])]['benefit'] = 0
                 board[(segment['x'],segment['y'])]['contains'] = 'body'
                 board[(segment['x'],segment['y'])]['full'] = True
             elif headNearFood:
                 # the head is near food. this may or may not be a bad move GAMBLe
-                board[(segment['x'],segment['y'])]['cost'] = 99
-                board[(segment['x'],segment['y'])]['benefit'] = 0
                 board[(segment['x'],segment['y'])]['contains'] = 'body'
                 board[(segment['x'],segment['y'])]['full'] = False
             else:
                 # other snake's tail. Could be like an empty space if no duplicate found
-                board[(segment['x'],segment['y'])]['cost'] = 10
-                board[(segment['x'],segment['y'])]['benefit'] = 10
                 board[(segment['x'],segment['y'])]['contains'] = 'tail'
                 isTail = True
         else:
             #found a body segment
-            board[(segment['x'],segment['y'])]['cost'] = 99
-            board[(segment['x'],segment['y'])]['benefit'] = 0
             board[(segment['x'],segment['y'])]['contains'] = 'body'
             board[(segment['x'],segment['y'])]['full'] = True
 
@@ -134,6 +116,21 @@ def foodPlotter (board, food):
         board[(pellet['x'],pellet['y'])]['food'] = True
 
     return board
+
+#mark for deletion
+def ortho(point, width, height):
+    # point input is a tuple (2,3)
+    # all coordinates that exist around the point
+    points = []
+    if point[1]-1 >= 0:
+        points.append((point[0],point[1]-1))
+    if point[1]+1 < height:
+        points.append((point[0],point[1]+1))
+    if point[0]-1 >= 0: 
+        points.append((point[0]-1,point[1]))
+    if point[0]+1 < width: 
+        points.append((point[0]+1,point[1]))
+    return points
 
 def pointSetter(board, coords, key, modification):
     # coords looks like [(0,0),(9,8)]
@@ -168,10 +165,11 @@ def spaceCounter(board, myHead, width, height):
                 #is an empty space
                 connected = connected + 1
                 if contents['threat']:
+                    threatCount = threatCount + int((abs(point[0]-startingPoint[0])**2 + abs(point[1]-startingPoint[1])**2)/10)
                     threatCount = threatCount + 1
                 if contents['food']:
                     #get distance to the food
-                    foodDistance = foodDistance + int(((abs(point[0]-startingPoint[0])**2 + abs(point[1]-startingPoint[1])**2)**2)/10)
+                    foodDistance = foodDistance + int((abs(point[0]-startingPoint[0])**4 + abs(point[1]-startingPoint[1])**4)/10)
                     foodCount = foodCount + 1
                 prospectives = set()
                 if point[1]-1 >= 0:
@@ -192,27 +190,38 @@ def spaceCounter(board, myHead, width, height):
             foodFactor = 0
         return {'threatCount':threatCount, 'foodFactor':foodFactor, 'connected':connected}
     
-    directions = {}
+    directions = []
 
     # fix up food factor math. if there is 2 spaces and 1 food the desire to eat should be insignificant
     #TODO
     if myHead[1]-1 >= 0:
         distance = checkDirection((myHead[0], myHead[1]-1))
         if distance['connected'] > 0:
-            directions['up'] = distance
+            distance['direction'] = 'up'
+            directions.append(distance)
     if myHead[1]+1 < height:
         distance = checkDirection((myHead[0],myHead[1]+1))
         if distance['connected'] > 0:
-            directions['down'] = distance
+            distance['direction'] = 'down'
+            directions.append(distance)
     if myHead[0]-1 >= 0: 
         distance = checkDirection((myHead[0]-1,myHead[1]))
         if distance['connected'] > 0:
-            directions['left'] = distance
+            distance['direction'] = 'left'
+            directions.append(distance)
     if myHead[0]+1 < width: 
         distance = checkDirection((myHead[0]+1,myHead[1]))
         if distance['connected'] > 0:
-            directions['right'] = distance
+            distance['direction'] = 'right'
+            directions.append(distance)
     return directions
+
+def evaluateMoveData(dir):
+    #connected high is good most important.
+    #threatcount low is good
+    #foodfactor low number is good steer this way
+    
+    return 'left'
 
 def getMove(blob):
     # print(blob)
@@ -227,8 +236,7 @@ def getMove(blob):
     # instantiate board
     for x in range(0,width):
         for y in range(0,height):
-            board[(x,y)] = {'cost':10, 'benefit':10, 'threat': False, 'food': False, 'full': False}
-
+            board[(x,y)] = {'threat': False, 'food': False, 'full': False}
     
     board = foodPlotter(board, blob['food'])
     isMe = True
@@ -248,13 +256,15 @@ def getMove(blob):
     # this should return a food distance potential
     print("directions")
     print(directions)
+    # for x in directions:
+    #     # pop 
 
-    boardPrinter(board, width, height, 'threat')
-    #TODO find the numeric best of the directions list and pop the value
+
+    # boardPrinter(board, width, height, 'threat')
   
 
 
-    return 'left'
+    return evaluateMoveData(directions)
 
     '''
     two snakes on board
