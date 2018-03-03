@@ -78,13 +78,13 @@ def snakePlotter (board, snake, myLength):
                 if board[(segment['x'],segment['y']-1)]['food'] == True:
                     headNearFood = True #food above
             if (segment['x'],segment['y']+1) in board.keys():
-                if board[(segment['x'],segment['y']-1)]['food'] == True:
+                if board[(segment['x'],segment['y']+1)]['food'] == True:
                     headNearFood = True #food below
             if (segment['x']-1,segment['y']) in board.keys():
-                if board[(segment['x'],segment['y']-1)]['food'] == True:
+                if board[(segment['x']-1,segment['y'])]['food'] == True:
                     headNearFood = True #food left
             if (segment['x']+1,segment['y']) in board.keys():
-                if board[(segment['x'],segment['y']-1)]['food'] == True:
+                if board[(segment['x']+1,segment['y'])]['food'] == True:
                     headNearFood = True #food above
 
         elif segment == snake['body']['data'][len(snake['body']['data'])-1]:
@@ -263,16 +263,20 @@ def getMove(blob):
         swaps = False
         for i in range(passnum):
             if (directions[i]['connected'] - directions[i]['threatCount'])>(directions[i+1]['connected'] - directions[i+1]['threatCount']):
-                print("swapping")
                 exchanges = True
                 temp = directions[i]
                 directions[i] = directions[i+1]
                 directions[i+1] = temp
         passnum = passnum-1
+    # sort them from greatest to least
 
+    direction = reversed(directions)
     #compare all elements
 
-    return 'left'
+    
+
+
+    return directions[0]['direction']
 
     '''
     two snakes on board
