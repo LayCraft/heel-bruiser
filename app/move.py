@@ -59,7 +59,6 @@ def snakePlotter (board, snake, myLength):
     for segment in snake['body']['data']:
         # put segments into board collection
         if isHead:
-            # The head location does not have cost or benefit
             board[(segment['x'],segment['y'])]['contains'] = 'head'
             board[(segment['x'],segment['y'])]['full'] = True
             isHead = False
@@ -165,8 +164,7 @@ def spaceCounter(board, myHead, width, height):
                 #is an empty space
                 connected = connected + 1
                 if contents['threat']:
-                    threatCount = threatCount + int((abs(point[0]-startingPoint[0])**2 + abs(point[1]-startingPoint[1])**2)/10)
-                    threatCount = threatCount + 1
+                    threatCount = threatCount + 10
                 if contents['food']:
                     #get distance to the food
                     foodDistance = foodDistance + int((abs(point[0]-startingPoint[0])**4 + abs(point[1]-startingPoint[1])**4)/10)
@@ -188,7 +186,7 @@ def spaceCounter(board, myHead, width, height):
             foodFactor = int(foodDistance / foodCount)
         else:
             foodFactor = 0
-        return {'threatCount':threatCount, 'foodFactor':foodFactor, 'connected':connected}
+        return {'threatCount':threatCount, 'foodFactor':foodFactor, 'connected':connected, 'coord':startingPoint}
     
     directions = []
 
@@ -245,10 +243,7 @@ def getMove(blob):
     
     #calculate food incentives how much closer to food does it get you? Determine food factor for spot.
     #each food pellet in that direction is worth (board width + board height -2) - food distance
-    # this should return a food distance potential
-    print("directions")
-    print(directions)
-    
+    # this should return a food distance potential    
 
     # for element in directions:
         # reduce the area by the amount of threats
@@ -262,15 +257,30 @@ def getMove(blob):
     while passnum>0 and swaps:
         swaps = False
         for i in range(passnum):
-            if (directions[i]['connected'] - directions[i]['threatCount'])>(directions[i+1]['connected'] - directions[i+1]['threatCount']):
+            if (directions[i]['connected'] - directions[i]['threatCount']) > (directions[i+1]['connected'] - directions[i+1]['threatCount']):
                 exchanges = True
                 temp = directions[i]
                 directions[i] = directions[i+1]
                 directions[i+1] = temp
         passnum = passnum-1
-    # sort them from greatest to least
+    
+    print(directions)
 
+    #order form high to low
     direction = reversed(directions)
+    if len(directions) == 0:
+        return 'right'
+    elif len(directions) == 1:
+        return directions[0]['direction']
+    elif directions[0]['connected'] - directions[0]['threatCount'] > directions[0]['connected'] - directions[0]['threatCount']:
+        return directions[0]['direction']
+    elif directions[0]['connected'] - directions[0]['threatCount'] == directions[0]['connected'] - directions[0]['threatCount']:
+        if directions[0]['foodFactor']<directions[1]['foodFactor']:
+            return directions[0]['direction']
+        elif directions[0]['foodFactor']>directions[1]['foodFactor']:
+            return directions[1]['direction']
+        else:
+            return directions[0]['direction']
     #compare all elements
 
     
