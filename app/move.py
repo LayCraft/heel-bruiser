@@ -259,15 +259,16 @@ def getMove(blob):
     #sort of bubble sort to arrange by connected-
     swaps = True
     passnum = len(directions)-1
-        while passnum>0 and swaps:
-            swaps = False
-            for i in range(passnum):
-                if (directions[i]['connected'] - directions[i]['threatCount'])>(directions[i+1]['connected'] - directions[i+1]['threatCount']):
-                    exchanges = True
-                    temp = directions[i]
-                    directions[i] = directions[i+1]
-                    directions[i+1] = temp
-            passnum = passnum-1
+    while passnum>0 and swaps:
+        swaps = False
+        for i in range(passnum):
+            if (directions[i]['connected'] - directions[i]['threatCount'])>(directions[i+1]['connected'] - directions[i+1]['threatCount']):
+                print("swapping")
+                exchanges = True
+                temp = directions[i]
+                directions[i] = directions[i+1]
+                directions[i+1] = temp
+        passnum = passnum-1
 
     #compare all elements
 
