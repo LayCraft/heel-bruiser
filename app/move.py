@@ -135,20 +135,6 @@ def foodPlotter (board, food):
 
     return board
 
-def ortho(point, width, height):
-    # point input is a tuple (2,3)
-    # all coordinates that exist around the point
-    points = []
-    if point[1]-1 >= 0:
-        points.append((point[0],point[1]-1))
-    if point[1]+1 < height:
-        points.append((point[0],point[1]+1))
-    if point[0]-1 >= 0: 
-        points.append((point[0]-1,point[1]))
-    if point[0]+1 < width: 
-        points.append((point[0]+1,point[1]))
-    return points
-
 def pointSetter(board, coords, key, modification):
     # coords looks like [(0,0),(9,8)]
     # modification looks like 10 or -10
@@ -169,6 +155,7 @@ def spaceCounter(board, myHead, width, height):
         connected = 0
         foodCount = 0
         foodDistance = 0
+        threatCount = 0
         while len(unchecked)>0:
             #get contents of space
             point = unchecked.pop()
@@ -180,6 +167,8 @@ def spaceCounter(board, myHead, width, height):
             elif not contents['full']:
                 #is an empty space
                 connected = connected + 1
+                if contents['threat']:
+                    threatCount = threatCount + 1
                 if contents['food']:
                     #get distance to the food
                     foodDistance = foodDistance + int(((abs(point[0]-startingPoint[0])**2 + abs(point[1]-startingPoint[1])**2)**2)/10)
@@ -201,27 +190,28 @@ def spaceCounter(board, myHead, width, height):
             foodFactor = int(foodDistance / foodCount)
         else:
             foodFactor = 0
-        return {'foodFactor':foodFactor, 'connected':connected}
+        return {'threatCount':threatCount, 'foodFactor':foodFactor, 'connected':connected}
     
     directions = {}
 
     # fix up food factor math. if there is 2 spaces and 1 food the desire to eat should be insignificant
+    #TODO
     if myHead[1]-1 >= 0:
         distance = checkDirection((myHead[0], myHead[1]-1))
         if distance['connected'] > 0:
-            directions['up'] = distance['connected'] + distance['foodFactor']
+            directions['up'] = distance
     if myHead[1]+1 < height:
         distance = checkDirection((myHead[0],myHead[1]+1))
         if distance['connected'] > 0:
-            directions['down'] = distance['connected'] + distance['foodFactor']
+            directions['down'] = distance
     if myHead[0]-1 >= 0: 
         distance = checkDirection((myHead[0]-1,myHead[1]))
         if distance['connected'] > 0:
-            directions['left'] = distance['connected'] + distance['foodFactor']
+            directions['left'] = distance
     if myHead[0]+1 < width: 
         distance = checkDirection((myHead[0]+1,myHead[1]))
         if distance['connected'] > 0:
-            directions['right'] = distance['connected'] + distance['foodFactor']
+            directions['right'] = distance
     return directions
 
 def getMove(blob):
@@ -259,11 +249,12 @@ def getMove(blob):
     print("directions")
     print(directions)
 
-    # remove anything less than the highest value
-    # isolate the direction with the least resistence
+    boardPrinter(board, width, height, 'threat')
+    #TODO find the numeric best of the directions list and pop the value
+  
 
 
-    return longest.pop()
+    return 'left'
 
     '''
     two snakes on board
