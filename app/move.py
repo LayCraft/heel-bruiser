@@ -279,7 +279,6 @@ def getMove(blob):
 
     #order form high to low
     direction = reversed(directions)
-    foodFactors = reversed(foodFactors)
     # no choices. Crash like a champ
     if len(directions) == 0:
         return 'right'
