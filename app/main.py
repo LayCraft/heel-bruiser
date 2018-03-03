@@ -40,8 +40,8 @@ def start():
     )
 
     return {
-        # 'color': '#FF00FF',
-        'color': '#FEFEFE',
+        'color': '#FF00FF',
+        # 'color': '#FEFEFE',
         'name': "Spanner",
         # URL of the image to display as your avatar.
         'head_url': head_url,

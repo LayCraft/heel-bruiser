@@ -145,6 +145,9 @@ def pointSetter(board, coords, key, modification):
 def spaceCounter(board, myHead, width, height):
     def checkDirection(coord):
         startingPoint = coord
+        isThreat = False
+        if board[coord]['threat'] == True:
+            isThreat = True
         # find a count of all connected open spaces
         unchecked = set()
         checked = set()
@@ -154,6 +157,7 @@ def spaceCounter(board, myHead, width, height):
         foodCount = 0
         foodDistance = 0
         threatCount = 0
+        
         while len(unchecked)>0:
             #get contents of space
             point = unchecked.pop()
@@ -188,7 +192,7 @@ def spaceCounter(board, myHead, width, height):
             foodFactor = int(foodDistance / foodCount)
         else:
             foodFactor = 0
-        return {'threatCount':threatCount, 'foodFactor':foodFactor, 'connected':connected, 'coord':startingPoint}
+        return {'threatCount':threatCount, 'foodFactor':foodFactor, 'connected':connected, 'isThreat':isThreat}
     
     directions = []
 
@@ -267,22 +271,44 @@ def getMove(blob):
                 directions[i+1] = temp
         passnum = passnum-1
     
+
+
+    
     print(directions)
-    print("threat")
-    print(board[directions[0]['coord']]['threat'])
+    print(directions[0]['isThreat'])
 
     #order form high to low
     direction = reversed(directions)
+    foodFactors = reversed(foodFactors)
+    # no choices. Crash like a champ
     if len(directions) == 0:
         return 'right'
+    # case is there is only one option
     elif len(directions) == 1:
         return directions[0]['direction']
-    elif directions[0]['connected'] - directions[0]['threatCount'] > directions[0]['connected'] - directions[0]['threatCount']:
-        # if board[directions[0]['coord']]['threat']==True:
-        return directions[0]['direction']
-    elif directions[0]['connected'] - directions[0]['threatCount'] == directions[0]['connected'] - directions[0]['threatCount']:
-        if directions[0]['foodFactor']<directions[1]['foodFactor']:
+    # case the amount of open spaces is in the first element
+    elif directions[0]['connected'] > directions[1]['connected']:
+        # case look for something that isn't a threat
+        notThreat = directions[0]['direction']
+        for element in directions:
+            if not element['isThreat'] and element['connected']>=myLength:
+                notThreat = element['direction']
+                break
+        # if a okay spot was found return it
+        return notThreat
+    # case the top two choices have the same number of connected spaces
+    elif directions[0]['connected'] == directions[1]['connected']:
+        # case look for something that isn't a threat first
+        notThreat = directions[0]['direction']
+        for element in directions:
+            if not element['isThreat'] and element['connected']>=myLength:
+                notThreat = element['direction']
+                break
+
+        # then go for the lowest 
+        if directions[0]['foodFactor']<=directions[1]['foodFactor']:
             return directions[0]['direction']
+        # go     
         elif directions[0]['foodFactor']>directions[1]['foodFactor']:
             return directions[1]['direction']
         else:
