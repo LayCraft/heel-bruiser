@@ -1,14 +1,12 @@
-# battlesnake-python
+# Heel-Bruiser
 
-A simple [BattleSnake AI](http://battlesnake.io) written in Python. 
+A snake for BattleSnake 2019. This snake may be able to bruise a heel but ultimately the head will be crushed. 
 
-Visit [battlesnake.io/readme](http://battlesnake.io/readme) for API documentation and instructions for running your AI.
+Visit [battlesnake.io/readme](http://battlesnake.io/readme) for API documentation.
 
-This AI client uses the [bottle web framework](http://bottlepy.org/docs/dev/index.html) to serve requests and the [gunicorn web server](http://gunicorn.org/) for running bottle on Heroku. Dependencies are listed in [requirements.txt](requirements.txt).
+Automatically deploued to Heroku at https://heel-bruiser.herokuapp.com
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
-# Spanner Snake
+## Virtual Environment
 
 run the virtual environment using `source env/bin/activate`
 
